@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         mapbox:center_latitude="47.6077"
         mapbox:center_longitude="-122.3421"
+        mapbox:texture_mode="true"
         mapbox:style_url="mapbox://styles/mapbox/streets-v9"
         mapbox:zoom="11"/>
 
