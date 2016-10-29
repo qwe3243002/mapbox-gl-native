@@ -4,8 +4,8 @@
 #include <mbgl/renderer/raster_bucket.hpp>
 #include <mbgl/style/layers/raster_layer.hpp>
 #include <mbgl/style/layers/raster_layer_impl.hpp>
-#include <mbgl/shader/shaders.hpp>
-#include <mbgl/shader/raster_uniforms.hpp>
+#include <mbgl/programs/programs.hpp>
+#include <mbgl/programs/raster_program.hpp>
 
 namespace mbgl {
 
@@ -58,8 +58,8 @@ void Painter::renderRaster(PaintParameters& parameters,
         depthModeForSublayer(0, gl::DepthMode::ReadOnly),
         gl::StencilMode::disabled(),
         colorModeForRenderPass(),
-        parameters.shaders.raster,
-        RasterUniforms::values(
+        parameters.programs.raster,
+        RasterProgram::UniformValues(
             tile.matrix,
             0,
             1,
