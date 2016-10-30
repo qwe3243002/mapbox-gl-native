@@ -48,7 +48,7 @@ void Painter::renderRaster(PaintParameters& parameters,
     if (!bucket.hasData())
         return;
 
-    const RasterPaintProperties& properties = layer.impl->paint;
+    const RasterPaintProperties::Evaluated& properties = layer.impl->paint.evaluated;
 
     assert(bucket.texture);
     context.bindTexture(*bucket.texture, 0, gl::TextureFilter::Linear);
@@ -64,13 +64,13 @@ void Painter::renderRaster(PaintParameters& parameters,
             tile.matrix,
             0,
             1,
-            properties.rasterOpacity.value,
+            properties.get<RasterOpacity>(),
             0,
-            properties.rasterBrightnessMin.value,
-            properties.rasterBrightnessMax.value,
-            saturationFactor(properties.rasterSaturation.value),
-            contrastFactor(properties.rasterContrast.value),
-            spinWeights(properties.rasterHueRotate.value),
+            properties.get<RasterBrightnessMin>(),
+            properties.get<RasterBrightnessMax>(),
+            saturationFactor(properties.get<RasterSaturation>()),
+            contrastFactor(properties.get<RasterContrast>()),
+            spinWeights(properties.get<RasterHueRotate>()),
             1.0f,
             1.0f,
             std::array<float, 2> {{ 0.0f, 0.0f }}

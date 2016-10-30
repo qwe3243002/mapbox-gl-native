@@ -14,13 +14,13 @@ using namespace style;
 void Painter::renderBackground(PaintParameters& parameters, const BackgroundLayer& layer) {
     // Note that for bottommost layers without a pattern, the background color is drawn with
     // glClear rather than this method.
-    const BackgroundPaintProperties& properties = layer.impl->paint;
+    const BackgroundPaintProperties::Evaluated& properties = layer.impl->paint.evaluated;
 
-    if (!properties.backgroundPattern.value.to.empty()) {
+    if (!properties.get<BackgroundPattern>().to.empty()) {
         optional<SpriteAtlasPosition> imagePosA = spriteAtlas->getPosition(
-            properties.backgroundPattern.value.from, SpritePatternMode::Repeating);
+            properties.get<BackgroundPattern>().from, SpritePatternMode::Repeating);
         optional<SpriteAtlasPosition> imagePosB = spriteAtlas->getPosition(
-            properties.backgroundPattern.value.to, SpritePatternMode::Repeating);
+            properties.get<BackgroundPattern>().to, SpritePatternMode::Repeating);
 
         if (!imagePosA || !imagePosB)
             return;
@@ -36,11 +36,11 @@ void Painter::renderBackground(PaintParameters& parameters, const BackgroundLaye
                 colorModeForRenderPass(),
                 FillPatternUniforms::values(
                     matrixForTile(tileID),
-                    properties.backgroundOpacity.value,
+                    properties.get<BackgroundOpacity>(),
                     context.viewport.getCurrentValue().size,
                     *imagePosA,
                     *imagePosB,
-                    properties.backgroundPattern.value,
+                    properties.get<BackgroundPattern>(),
                     tileID,
                     state
                 ),
@@ -57,9 +57,9 @@ void Painter::renderBackground(PaintParameters& parameters, const BackgroundLaye
                 colorModeForRenderPass(),
                 FillUniforms::values(
                     matrixForTile(tileID),
-                    properties.backgroundOpacity.value,
-                    properties.backgroundColor.value,
-                    properties.backgroundColor.value,
+                    properties.get<BackgroundOpacity>(),
+                    properties.get<BackgroundColor>(),
+                    properties.get<BackgroundColor>(),
                     context.viewport.getCurrentValue().size
                 ),
                 tileTriangleVertexBuffer

@@ -8,10 +8,12 @@
 
 namespace mbgl {
 
+using namespace style;
+
 static_assert(sizeof(LineAttributes::Vertex) == 8, "expected LineVertex size");
 
 template <class Values, class...Args>
-Values makeValues(const style::LinePaintProperties& properties,
+Values makeValues(const LinePaintProperties::Evaluated& properties,
                   float pixelRatio,
                   const RenderTile& tile,
                   const TransformState& state,
@@ -31,14 +33,14 @@ Values makeValues(const style::LinePaintProperties& properties,
     float x = state.getSize().height / 2.0f * std::tan(state.getPitch());
 
     return Values {
-        tile.translatedMatrix(properties.lineTranslate.value,
-                              properties.lineTranslateAnchor.value,
+        tile.translatedMatrix(properties.get<LineTranslate>(),
+                              properties.get<LineTranslateAnchor>(),
                               state),
-        properties.lineOpacity.value,
-        properties.lineWidth.value / 2,
-        properties.lineGapWidth.value / 2,
-        properties.lineBlur.value + antialiasing,
-        -properties.lineOffset.value,
+        properties.get<LineOpacity>(),
+        properties.get<LineWidth>() / 2,
+        properties.get<LineGapWidth>() / 2,
+        properties.get<LineBlur>() + antialiasing,
+        -properties.get<LineOffset>(),
         antialiasing / 2,
         antialiasingMatrix,
         1.0f / tile.id.pixelsToTileUnits(1.0, state.getZoom()),
@@ -48,7 +50,7 @@ Values makeValues(const style::LinePaintProperties& properties,
 }
 
 LineProgram::UniformValues
-LineProgram::uniformValues(const style::LinePaintProperties& properties,
+LineProgram::uniformValues(const LinePaintProperties::Evaluated& properties,
                            float pixelRatio,
                            const RenderTile& tile,
                            const TransformState& state) {
@@ -57,12 +59,12 @@ LineProgram::uniformValues(const style::LinePaintProperties& properties,
         pixelRatio,
         tile,
         state,
-        properties.lineColor.value
+        properties.get<LineColor>()
     );
 }
 
 LineSDFProgram::UniformValues
-LineSDFProgram::uniformValues(const style::LinePaintProperties& properties,
+LineSDFProgram::uniformValues(const LinePaintProperties::Evaluated& properties,
                               float pixelRatio,
                               const RenderTile& tile,
                               const TransformState& state,
@@ -70,8 +72,8 @@ LineSDFProgram::uniformValues(const style::LinePaintProperties& properties,
                               const LinePatternPos& posB,
                               float dashLineWidth,
                               float atlasWidth) {
-    const float widthA = posA.width * properties.lineDasharray.value.fromScale * dashLineWidth;
-    const float widthB = posB.width * properties.lineDasharray.value.toScale * dashLineWidth;
+    const float widthA = posA.width * properties.get<LineDasharray>().fromScale * dashLineWidth;
+    const float widthB = posB.width * properties.get<LineDasharray>().toScale * dashLineWidth;
 
     std::array<float, 2> scaleA {{
         1.0f / tile.id.pixelsToTileUnits(widthA, state.getIntegerZoom()),
@@ -88,31 +90,31 @@ LineSDFProgram::uniformValues(const style::LinePaintProperties& properties,
         pixelRatio,
         tile,
         state,
-        properties.lineColor.value,
+        properties.get<LineColor>(),
         scaleA,
         scaleB,
         posA.y,
         posB.y,
-        properties.lineDasharray.value.t,
+        properties.get<LineDasharray>().t,
         atlasWidth / (std::min(widthA, widthB) * 256.0f * pixelRatio) / 2.0f,
         0
     );
 }
 
 LinePatternProgram::UniformValues
-LinePatternProgram::uniformValues(const style::LinePaintProperties& properties,
+LinePatternProgram::uniformValues(const LinePaintProperties::Evaluated& properties,
                                   float pixelRatio,
                                   const RenderTile& tile,
                                   const TransformState& state,
                                   const SpriteAtlasPosition& posA,
                                   const SpriteAtlasPosition& posB) {
      std::array<float, 2> sizeA {{
-         tile.id.pixelsToTileUnits(posA.size[0] * properties.linePattern.value.fromScale, state.getIntegerZoom()),
+         tile.id.pixelsToTileUnits(posA.size[0] * properties.get<LinePattern>().fromScale, state.getIntegerZoom()),
          posA.size[1]
      }};
 
      std::array<float, 2> sizeB {{
-         tile.id.pixelsToTileUnits(posB.size[0] * properties.linePattern.value.toScale, state.getIntegerZoom()),
+         tile.id.pixelsToTileUnits(posB.size[0] * properties.get<LinePattern>().toScale, state.getIntegerZoom()),
          posB.size[1]
      }};
 
@@ -127,7 +129,7 @@ LinePatternProgram::uniformValues(const style::LinePaintProperties& properties,
         posB.br,
         sizeA,
         sizeB,
-        properties.linePattern.value.t,
+        properties.get<LinePattern>().t,
         0
     );
 }
