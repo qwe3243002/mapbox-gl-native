@@ -177,6 +177,13 @@ static const NSInteger MGLStyleDefaultVersion = 9;
 /**
  Returns a layer that conforms to `MGLStyleLayer` if any layer with the given
  identifier was found.
+ 
+ @note Layer identifiers are subject to change and are not guaranteed to exist
+    accross styles or different versions of the same style. Applications that
+    use this API must set the style URL to an explicitly versioned style
+    using a convenience method like +[MGLStyle outdoorsStyleURLWithVersion:],
+    the “Style URL” IBInspectable in `MGLMapView`, or a manually constructed 
+    NSURL.
 
  @return An instance of a concrete subclass of `MGLStyleLayer` associated with
     the given identifier.
@@ -186,6 +193,13 @@ static const NSInteger MGLStyleDefaultVersion = 9;
 
 /**
  Returns a source if any source with the given identifier was found.
+ 
+ @note Source identifiers are subject to change and are not guaranteed to exist
+    accross styles or different versions of the same style. Applications that
+    use this API must set the style URL to an explicitly versioned style
+    using a convenience method like +[MGLStyle outdoorsStyleURLWithVersion:],
+    the “Style URL” IBInspectable in `MGLMapView`, or a manually constructed 
+    NSURL.
 
  @return An instance of a concrete subclass of `MGLSource` associated with the
     given identifier.
@@ -202,6 +216,13 @@ static const NSInteger MGLStyleDefaultVersion = 9;
 
 /**
  Inserts a new layer below another layer.
+ 
+ @note Layer identifiers are subject to change and are not guaranteed to exist
+    accross styles or different versions of the same style. Applications that
+    use this API must set the style URL to an explicitly versioned style
+    using a convenience method like +[MGLStyle outdoorsStyleURLWithVersion:],
+    the “Style URL” IBInspectable in `MGLMapView`, or a manually constructed
+    NSURL.
 
  @param layer Layer to be inserted.
  @param belowLayer A layer that's already on the map view.
