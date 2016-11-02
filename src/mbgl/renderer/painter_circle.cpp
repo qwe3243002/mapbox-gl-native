@@ -22,13 +22,14 @@ void Painter::renderCircle(PaintParameters& parameters,
 
     const CirclePaintProperties& properties = layer.impl->paint;
 
-    context.draw({
+    parameters.programs.circle.draw(
+        context,
+        gl::Triangles(),
         depthModeForSublayer(0, gl::DepthMode::ReadOnly),
         frame.mapMode == MapMode::Still
             ? stencilModeForClipping(tile.clip)
             : gl::StencilMode::disabled(),
         colorModeForRenderPass(),
-        parameters.programs.circle,
         CircleProgram::UniformValues(
             tile.translatedMatrix(properties.circleTranslate.value,
                                   properties.circleTranslateAnchor.value,
@@ -46,12 +47,10 @@ void Painter::renderCircle(PaintParameters& parameters,
                 : pixelsToGLUnits,
             frame.pixelRatio
         ),
-        gl::Segmented<gl::Triangles>(
-            *bucket.vertexBuffer,
-            *bucket.indexBuffer,
-            bucket.segments
-        )
-    });
+        *bucket.vertexBuffer,
+        *bucket.indexBuffer,
+        bucket.segments
+    );
 }
 
 } // namespace mbgl
