@@ -41,7 +41,6 @@ macro(mbgl_platform_core)
         PRIVATE platform/default/webp_reader.cpp
 
         # Headless view
-        PRIVATE platform/default/headless_backend_glx.cpp
         PRIVATE platform/default/headless_backend.cpp
         PRIVATE platform/default/headless_display.cpp
         PRIVATE platform/default/offscreen_view.cpp
@@ -63,22 +62,32 @@ macro(mbgl_platform_core)
     target_link_libraries(mbgl-core
         PUBLIC -lz
         PUBLIC -lcurl
+    )
+endmacro()
+
+
+macro(mbgl_platform_glfw)
+    target_sources(mbgl-glfw
+        PRIVATE platform/default/headless_backend_glx.cpp
+    )
+
+    target_link_libraries(mbgl-glfw
+        PRIVATE mbgl-loop
         PUBLIC -lGL
         PUBLIC -lX11
     )
 endmacro()
 
 
-macro(mbgl_platform_glfw)
-    target_link_libraries(mbgl-glfw
-        PRIVATE mbgl-loop
-    )
-endmacro()
-
-
 macro(mbgl_platform_render)
+    target_sources(mbgl-render
+        PRIVATE platform/default/headless_backend_glx.cpp
+    )
+
     target_link_libraries(mbgl-render
         PRIVATE mbgl-loop
+        PUBLIC -lGL
+        PUBLIC -lX11
     )
 endmacro()
 
@@ -86,6 +95,8 @@ endmacro()
 macro(mbgl_platform_offline)
     target_link_libraries(mbgl-offline
         PRIVATE mbgl-loop
+        PUBLIC -lGL # TODO: eliminate
+        PUBLIC -lX11 # TODO: eliminate
     )
 endmacro()
 
@@ -93,6 +104,7 @@ endmacro()
 macro(mbgl_platform_test)
     target_sources(mbgl-test
         PRIVATE test/src/main.cpp
+        PRIVATE platform/default/headless_backend_glx.cpp
     )
 
     set_source_files_properties(
@@ -103,6 +115,8 @@ macro(mbgl_platform_test)
 
     target_link_libraries(mbgl-test
         PRIVATE mbgl-loop
+        PUBLIC -lGL
+        PUBLIC -lX11
     )
 endmacro()
 
@@ -110,6 +124,7 @@ endmacro()
 macro(mbgl_platform_benchmark)
     target_sources(mbgl-benchmark
         PRIVATE benchmark/src/main.cpp
+        PRIVATE platform/default/headless_backend_glx.cpp
     )
 
     set_source_files_properties(
@@ -120,10 +135,19 @@ macro(mbgl_platform_benchmark)
 
     target_link_libraries(mbgl-benchmark
         PRIVATE mbgl-loop
+        PUBLIC -lGL
+        PUBLIC -lX11
     )
 endmacro()
 
 
 macro(mbgl_platform_node)
-    # Enabling node module by defining this macro
+    target_sources(mbgl-node
+        PRIVATE platform/default/headless_backend_glx.cpp
+    )
+
+    target_link_libraries(mbgl-node
+        PUBLIC -lGL
+        PUBLIC -lX11
+    )
 endmacro()
